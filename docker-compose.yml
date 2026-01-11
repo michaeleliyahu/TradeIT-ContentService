@@ -1,0 +1,36 @@
+services:
+  content-service:
+    build: .
+    container_name: content-service
+    env_file:
+      - .env
+    ports:
+      - "8003:8000"
+    depends_on:
+      - content-db
+      - rabbitmq
+
+  content-db:
+    image: postgres:15
+    container_name: content-db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: content_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - content-db-data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+volumes:
+  content-db-data:
