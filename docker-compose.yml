@@ -1,14 +1,22 @@
+# Content service compose file
+# Requires shared infrastructure: run 'docker-compose up -d' from TradeIT root first
+
 services:
   content-service:
     build: .
     container_name: content-service
     env_file:
       - .env
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@tradeit-rabbitmq:5672/
     ports:
       - "8003:8000"
     depends_on:
       - content-db
-      - rabbitmq
+    networks:
+      - tradeit-network
+      - default
+    restart: on-failure
 
   content-db:
     image: postgres:15
@@ -18,19 +26,13 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: content_db
     ports:
-      - "5434:5432"
+      - "5435:5432"  # Different port - 5434 is used by post-service
     volumes:
       - content-db-data:/var/lib/postgresql/data
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    ports:
-      - "5673:5672"
-      - "15673:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+networks:
+  tradeit-network:
+    external: true
 
 volumes:
   content-db-data:
