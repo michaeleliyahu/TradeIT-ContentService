@@ -7,8 +7,6 @@ services:
     container_name: content-service
     env_file:
       - .env
-    environment:
-      - RABBITMQ_URL=amqp://guest:guest@tradeit-rabbitmq:5672/
     ports:
       - "8003:8000"
     depends_on:
@@ -21,10 +19,8 @@ services:
   content-db:
     image: postgres:15
     container_name: content-db
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: content_db
+    env_file:
+      - .env
     ports:
       - "5435:5432"  # Different port - 5434 is used by post-service
     volumes:

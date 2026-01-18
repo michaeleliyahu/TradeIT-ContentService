@@ -18,4 +18,4 @@ RUN chmod +x /docker-entrypoint.sh
 
 # Set entrypoint to run migrations before starting the app
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "run.py"]
